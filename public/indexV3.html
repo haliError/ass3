@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransConverter - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.15.4/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Logo" class="logo-image">
+                <div class="logo-text">TransConverter</div>
+            </div>
+            <nav id="handleGroup">
+                <a href="#" class="login" onclick="showImageModal()">Video Converter</a>
+                <a href="#" class="login" onclick="showLoginModal()">Login</a>
+                <a href="#" class="register" onclick="showRegisterModal()">Register</a>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Online Image Converter</h1>
+            <div class="container" id="mainContent">
+                <!-- Convert Form -->
+                <form id="convertForm" class="mt-4">
+                    <h2 class="form-title">Convert Image</h2>
+                    <div class="form-group">
+                        <label for="key">Select Image:</label>
+                        <select id="key" name="key" class="form-control" required>
+                            <option value="">Select an image...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="format">Convert to format:</label>
+                        <select id="format" name="format" class="form-control" required>
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                            <option value="webp">WEBP</option>
+                            <option value="gif">GIF</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Convert</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Converted Image Modal -->
+    <div id="convertedImageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('convertedImageModal')">&times;</span>
+            <h2>Converted Image</h2>
+            <div class="image-container">
+                <img id="convertedImage" src="" alt="Converted Image">
+            </div>
+            <a id="downloadLink" href="" download>Download Image</a>
+        </div>
+    </div>
+
+    <script>
+        // Function to open the modal and display the image and download link
+        function openConvertedImageModal(imageUrl) {
+            document.getElementById('convertedImage').src = imageUrl;
+            document.getElementById('downloadLink').href = imageUrl;
+            document.getElementById('convertedImageModal').style.display = 'block';
+        }
+
+        // Function to close the modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Handle the convert form submission
+        document.getElementById('convertForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const key = document.getElementById('key').value;
+            const format = document.getElementById('format').value;
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key, format }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    openConvertedImageModal(data.url); // Show converted image with download link
+                } else {
+                    alert(data.message || 'Error converting image');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while converting the image.');
+            }
+        });
+    </script>
+</body>
+</html>

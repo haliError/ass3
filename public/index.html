@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransVideo - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.15.4/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Logo" class="logo-image">
+                <div class="logo-text">TransConverter</div>
+            </div>
+            <nav id="handleGroup">
+                <a href="#" class="login" onclick="showImageModal()">Video Converter</a>
+                <a href="#" class="login" onclick="showLoginModal()">Login</a>
+                <a href="#" class="register" onclick="showRegisterModal()">Register</a>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Online Image Converter</h1>
+            <div class="container" id="mainContent">
+                <form id="uploadForm" enctype="multipart/form-data" class="mt-4">
+                    <h2 class="form-title">Upload Image</h2>
+                    <div class="form-group">
+                        <label for="files">Select image(s):</label>
+                        <input type="file" id="files" name="files" class="form-control-file" multiple required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+
+                <form id="convertForm" class="mt-4">
+                    <h2 class="form-title">Convert Image</h2>
+                    <div class="form-group">
+                        <label for="key">Select Image:</label>
+                        <select id="key" name="key" class="form-control" required>
+                            <option value="">Select an image...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="format">Convert to format:</label>
+                        <select id="format" name="format" class="form-control" required>
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                            <option value="webp">WEBP</option>
+                            <option value="gif">GIF</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Convert</button>
+                </form>
+
+                <form id="deleteForm" class="mt-4">
+                    <h2 class="form-title">Delete Image from Database</h2>
+                    <div class="form-group">
+                        <label for="delete_key">Select Image to Delete:</label>
+                        <select id="delete_key" name="delete_key" class="form-control" required>
+                            <option value="">Select an image...</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Username" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="button" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Register</h2>
+            <input type="text" id="registerUsername" placeholder="Username" required>
+            <input type="password" id="registerPassword" placeholder="Password" required>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+            <button type="button" onclick="register()">Register</button>
+        </div>
+    </div>
+
+    <div id="convertedImageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('convertedImageModal')">&times;</span>
+            <h2>Converted Image</h2>
+            <div class="image-container">
+                <img id="convertedImage" src="" alt="Converted Image">
+            </div>
+            <a id="downloadLink" href="#" download class="btn-download">Download Image</a>
+        </div>
+    </div>
+
+    <div>
+        <canvas id="conversionChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        // Function to open the modal and display the image and download link
+        function openConvertedImageModal(imageUrl) {
+
+            alert(imageUrl);
+            document.getElementById('convertedImage').src = imageUrl;
+            document.getElementById('downloadLink').href = imageUrl;
+            document.getElementById('convertedImageModal').style.display = 'block';
+        }
+    </script>
+    <script>
+        document.getElementById('convertForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/images/convert', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (response.ok) {
+                    const modal = document.getElementById('convertedImageModal');
+                    const convertedImage = document.getElementById('convertedImage');
+                    const downloadLink = document.getElementById('downloadLink');
+
+//                    alert(key_url);
+                    convertedImage.src = result.key;
+                    downloadLink.href = result.key;
+                    modal.style.display = 'block';
+                } else {
+                    console.error('File conversion failed:', result.message);
+                }
+            } catch (error) {
+                console.error('Error during conversion:', error);
+            }
+        });
+
+        document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/images/delete', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    console.error('File deletion failed:', result.message);
+                }
+            } catch (error) {
+                console.error('Error during deletion:', error);
+            }
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/images/upload', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Upload failed:', result.message);
+                }
+            } catch (error) {
+                console.error('Error during upload:', error);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/images/image-keys');
+                const result = await response.json();
+
+                if (response.ok && result.keys.length) {
+                    const selectElementKey = document.getElementById('key');
+                    const deleteKeyElement = document.getElementById('delete_key');
+                    result.keys.forEach(key => {
+                        const optionKey = document.createElement('option');
+                        optionKey.value = key;
+                        optionKey.textContent = key;
+                        selectElementKey.appendChild(optionKey);
+                        deleteKeyElement.appendChild(optionKey.cloneNode(true));
+                    });
+                } else {
+                    console.error('Failed to fetch image keys:', result.message);
+                }
+            } catch (error) {
+                console.error('Error fetching image keys:', error);
+            }
+        });
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+    <script src="script.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
