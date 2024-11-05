@@ -42,7 +42,7 @@ const imageRoutes = require("./routes/imageRoutes");
 app.use("/images", imageRoutes);
 
 // Serve uploaded files from 'uploads' folder
-app.use("/upload", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // New route to fetch image keys from DynamoDB
 app.get('/images/image-keys', async (req, res) => {

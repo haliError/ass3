@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TransVideo - Home</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/7.15.4/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "v" />
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Logo" class="logo-image" />
+                <div class="logo-text">TransVideo</div>
+            </div>
+            <nav id="handleGroup">
+                <a href="transimage.html" class="transimage-link">TransImage</a>
+                <a href="#" class="login" onclick="showLoginModal()">Login</a>
+                <a href="#" class="register" onclick="showRegisterModal()">Register</a>
+            </nav>
+        </header>
+
+        <!-- Main content of your page -->
+        <main>
+            <h1>Online Video Converter</h1>
+            <div class="upload-area">
+                <input type="file" id="fileInput" accept="video/*" hidden multiple />
+                <button id="selectButton" onclick="document.getElementById('fileInput').click()">
+                    Select Video
+                </button>
+            </div>
+            <div class='tips'>The video playback function only supports MP4.</div>
+
+
+            <!-- Section for displaying uploaded files and conversion options -->
+
+            <div id="fileHandle" class="file-list">
+                <!-- Dynamically generated list items will appear here -->
+            </div>
+            <div id="fileList" class="file-list">
+                <!-- Dynamically generated list items will appear here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Username" required />
+            <input type="password" id="loginPassword" placeholder="Password" required />
+            <button type="button" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <!-- Modal for Register -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Register</h2>
+            <input type="text" id="registerUsername" placeholder="Username" required />
+            <input type="password" id="registerPassword" placeholder="Password" required />
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+            <button type="button" onclick="register()">Register</button>
+        </div>
+    </div>
+
+    <div id="viedoModal" class="modal">
+        <div class="modal-content2">
+            <span class="close" onclick="closeModal('viedoModal')">&times;</span>
+            <h2>Play Video</h2>
+
+            <div id="videoContent">
+
+            </div>
+
+        </div>
+    </div>
+    <div>
+        <canvas id="conversionChart" width="400" height="200"></canvas>
+    </div>
+      
+    <script src="script.js"></script>
+    <script src="client.js"></script>
+</body>
+
+</html>

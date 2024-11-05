@@ -7,6 +7,10 @@ const stream = require("stream");
 const { promisify } = require("util");
 const pipeline = promisify(stream.pipeline);
 const dotenv = require("dotenv");
+AWS.config.update({ region: process.env.AWS_REGION });
+const sqs = new AWS.SQS();
+const queueUrl = process.env.SQS_QUEUE_URL;
+
 
 // Load env variables
 dotenv.config();
@@ -261,7 +265,7 @@ const convertImage = async (req, res) => {
 
 //      // Generate a pre-signed URL for the converted image
 //      const url = await generatePresignedUrl(outputKey2);
-
+      
       // Return the URL and the key of the converted image
       const file_path = '/images/download/' + return_file_name_only;
       console.log(file_path);
